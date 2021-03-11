@@ -29,12 +29,12 @@ summ_num = 0
 for number in cubes:
     num_buff = number
     summ_dig = 0
-    ######### подсчет суммы символов
+    # подсчет суммы символов
     while num_buff >= 10:
         summ_dig = summ_dig + (num_buff % 10)
         num_buff = num_buff // 10
     summ_dig = summ_dig + num_buff
-    ###########
+    #
 
     if summ_dig % devisor == 0:
         summ_num = summ_num + number
