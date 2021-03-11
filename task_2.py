@@ -1,34 +1,33 @@
-def summ_of_digits(number):
+
+def summ_of_digits(nmb):
     summ_dig = 0
-    while number > 10:
-        summ_dig = summ_dig + number % 10
-        number = number // 10
-    summ_dig = summ_dig + number
+    while nmb >= 10:
+        summ_dig = summ_dig + (nmb % 10)
+        nmb = nmb // 10
+    summ_dig = summ_dig + nmb
     return summ_dig
 
-
-def summ_of_numbers(mas, devisor):
-    summ_num = 0
-    for number in mas:
-        if summ_of_digits(number) % devisor == 0:
-            print(number)
-            summ_num = summ_num + number
-    print(summ_num)
-    return summ_num
-
-
-def add_num(mas, num):
-    for ind in range(len(mas)):
-        mas[ind] = mas[ind] + num
-    return mas
-
-
+# Создание массива из кубов
 cubes = [i ** 3 for i in range(1, 1001, 2)]
-print(cubes)
+print(len(cubes))
+###################
 
-summ_of_numbers(cubes, 7)
 
-cubes = add_num(cubes, 17)
+# Подсчет суммы
+devisor = 7
+summ_num = 0
+for number in cubes:
+    if summ_of_digits(number) % devisor == 0:
+        summ_num = summ_num + number
+print(summ_num)
+####################
 
-summ_of_numbers(cubes, 7)
+summ_num = 0
+
+for number in cubes:
+    if summ_of_digits(number + 17) % devisor == 0:
+
+        summ_num = summ_num + number
+print(summ_num)
+
 # 17063185007
