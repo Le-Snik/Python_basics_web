@@ -1,5 +1,4 @@
-my_list = ['в', '5', 'часов', '17', 'минут', 'температура', 'воздуха', 'была', '+5', 'градусов']
-string = ''
+my_list = ['в', '5', 'часов', '17', 'минут', 'температура', 'воздуха', 'была', '+5', 'градусов', 'а', 'воды', '-10']
 signs = ['-', '+']
 
 i = 0
@@ -16,11 +15,6 @@ while i != len(my_list):
         i += 1
     i += 1
 
-for i in my_list:
-    if i.isalpha() and len(string) != 0:
-        string = string + ' ' + i + ' '
-    elif len(string) == 0:
-        string = string + i + ' '
-    else:
-        string = string + i
-print(string)
+
+print(' '.join(my_list))
+
