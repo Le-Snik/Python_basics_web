@@ -9,7 +9,6 @@ while i != len(my_list):
             my_list[i] = "0" + my_list[i]
         elif (my_list[i][0] in signs) and my_list[i][1:].isdigit and int(my_list[i][1:]) < 10: #для элементов со знаком
             my_list[i] = my_list[i][0] + "0" + my_list[i][1:]
-
         my_list.insert(i, '"')
         my_list.insert(i + 2, '"')
         i += 1
