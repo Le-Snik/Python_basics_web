@@ -5,7 +5,12 @@ eng = [i.lower() for i in ['zero', 'one', 'two', 'three', 'four', 'five', 'six',
 ru_eng_tup = zip(rus, eng)
 
 
-def registry(example, total):
+def registry(example, total):  #
+    """Выводит  результат в том же регистер, в котором был запрос
+     :param example - образец
+     :param total d-возвращемое значание, приводимое к регистру образца
+
+     """
     if example.isupper():
         total = total.upper()
     elif example.istitle():
@@ -15,7 +20,12 @@ def registry(example, total):
     return total
 
 
-def num_translate(tup, word):
+def num_translate(tup, word):  # усовершенствовал, переводит в обе стороны
+    """
+    :param tup: кортеж пар  слово - перевод
+    :param word: слово, перевод которого ищется
+    :return: перевод искомого слова
+    """
     word_buff = word.lower()
     result = ''
     for idx in tup:
@@ -24,11 +34,9 @@ def num_translate(tup, word):
             result = registry(word, result)
             return result
         if idx[1] == word_buff:
-            result = idx[1]
+            result = idx[0]
             result = registry(word, result)
             return result
-
-    return "None"
 
 
 str_For_translate = input("Введите число для перевода ")
