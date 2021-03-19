@@ -1,6 +1,20 @@
 names_list = ["Иван", "Мария", "Петр", "Илья", "Игорь", "Олег", "Татьяна"]
 lastnames_list = ["Иван Таранов", "Мария Иванова", "Петр Романов", "Илья Муромец", "Игорь Григорьев", "Олег Олегов",
-                  "Татьяна Белая", "Егор Тирский", "Василий Рыжов","Иннокентий Танов"]
+                  "Татьяна Белая", "Егор Тирский", "Василий Рыжов", "Иннокентий Танов"]
+
+
+def sort_dict(dictionar):
+    """ Сортирует словарь по ключам. Возвращает новый словарь
+
+    :param dictionar:  словарь для сортировки
+    :return:  возвращаемый новый отсортированный по ключам словарь
+    """
+    new_dict = {}
+    list_keys = list(dictionar.keys())
+    list_keys.sort()
+    for ind in list_keys:
+        new_dict[ind] = dictionar[ind]
+    return new_dict
 
 
 def make_dict(lst):
@@ -17,6 +31,12 @@ def make_dict(lst):
 
 
 def thesaurus_adv(lst):
+    """ возвращает словарь, в котором ключи — первые буквы фамилий, а значения — словари,
+    содержащие записи, в которых фамилия начинается с соответствующей буквы
+
+    :param lst: список имен и фамилий, разделенных пробелом
+    :return:
+    """
     buff_lst = lst.copy()
     lst_of_names = []
     for i in range(len(buff_lst)):
@@ -36,4 +56,7 @@ def thesaurus_adv(lst):
 
 lastnames_dict = make_dict(lastnames_list)
 thes_lastnames_dict = thesaurus_adv(lastnames_list)
+
+sorted_dict = sort_dict(thes_lastnames_dict)
 print(thes_lastnames_dict)
+print(sorted_dict)
