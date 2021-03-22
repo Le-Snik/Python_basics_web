@@ -20,7 +20,7 @@ def currency_rates(arg):
     """
 
     :param arg: Код валюты для получения курса
-    :return: возвращает список из даты, наименования валюты и собственно курса 
+    :return: возвращает список из даты, наименования валюты и собственно курса
     """
     arg = arg.upper()
     response = requests.get('http://www.cbr.ru/scripts/XML_daily.asp')
@@ -36,5 +36,7 @@ def currency_rates(arg):
 
 
 if __name__ == '__main__':
-    lst = currency_rates("AMD")
+    lst = currency_rates("usd")
+    print(f"на  {lst[0]} Курс 1 {lst[1]} равен {lst[2]} рублей")
+    lst = currency_rates("Eur")
     print(f"на  {lst[0]} Курс 1 {lst[1]} равен {lst[2]} рублей")
