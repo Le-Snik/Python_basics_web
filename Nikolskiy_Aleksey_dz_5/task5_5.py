@@ -11,8 +11,11 @@ for i in src:
 print(unique_src)
 
 # Если элемент есть в уникальном множесте, т опереписываем его  в новый список, для сохранения порядкового номера
+
 for i in src:
     if i in unique_src:
         src_res.append(i)
-
 print(src_res)
+
+src_res2 = [ind for ind in src if ind in unique_src]
+print(src_res2)
