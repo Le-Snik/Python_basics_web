@@ -13,7 +13,7 @@ def file_work(dir_users, dir_hobby, dir_total, is_json=0):
                 for i in range(len(use_list) - len(hobbys_list)):
                     hobbys_list.append('None')
 
-            users_list = [':'.join([i, ' ' + j])+'\n' for i, j in zip(use_list, hobbys_list)]
+            users_list = [':'.join([i, ' ' + j]) + '\n' for i, j in zip(use_list, hobbys_list)]
 
     if is_json:
         with open(dir_total, 'w', encoding='utf-8') as users_json:
