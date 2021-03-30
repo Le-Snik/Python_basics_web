@@ -26,4 +26,3 @@ def file_work(dir_users, dir_hobby, dir_total, is_json=0):
 
 if __name__ == '__main__':
     file_work("files//users.csv", "files//hobby.csv", "files//users_hobby.json", is_json=0)
-
