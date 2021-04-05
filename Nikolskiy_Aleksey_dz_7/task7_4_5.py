@@ -17,7 +17,7 @@ for root, dirs, files in os.walk(directory):
             file_size = os.stat(os.path.join(root, file)).st_size
             if (i <= file_size < i * 10) or (file_size == 0 and i == 0):
                 my_dict[i][0] += 1
-                if file.split('.')[1] not in my_dict[i][1]:
+                if file.split('.')[-1] not in my_dict[i][1]:
                     my_dict[i][1].append(file.split('.')[-1])
                 total_files += 1
 
