@@ -18,13 +18,17 @@ for root, dirs, files in os.walk(directory):
             if (i <= file_size < i * 10) or (file_size == 0 and i == 0):
                 my_dict[i][0] += 1
                 if file.split('.')[-1] not in my_dict[i][1]:
-                    my_dict[i][1].append(file.split('.')[-1])
+                    if len(file.split('.')) > 1:
+                        my_dict[i][1].append(file.split('.')[-1])
+                    elif None not in my_dict[i][1]:
+                        my_dict[i][1].append(None)
+
                 total_files += 1
 
 for i in my_dict:
     my_dict[i] = tuple(my_dict[i])
 
-with open(fold_name+'_summary.json', 'w+', encoding='utf-8') as users_json:
+with open(fold_name + '_summary.json', 'w+', encoding='utf-8') as users_json:
     json.dump(my_dict, users_json)
 print(my_dict)
 print(num_files)
