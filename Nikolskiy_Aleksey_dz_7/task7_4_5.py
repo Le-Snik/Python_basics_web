@@ -4,7 +4,6 @@ import json
 
 my_dict = {0: [0, []]}
 my_dict.update({10 ** i: [0, []] for i in range(1, 9)})
-pred = 0
 num_files = 0
 total_files = 0
 
