@@ -15,14 +15,11 @@ for root, dirs, files in os.walk(directory):
         num_files += 1
         for i in my_dict:
             file_size = os.stat(os.path.join(root, file)).st_size
+            file_mod = os.path.splitext(file)[1]
             if (i <= file_size < i * 10) or (file_size == 0 and i == 0):
                 my_dict[i][0] += 1
-                if file.split('.')[-1] not in my_dict[i][1]:
-                    if len(file.split('.')) > 1:
-                        my_dict[i][1].append(file.split('.')[-1])
-                    elif None not in my_dict[i][1]:
-                        my_dict[i][1].append(None)
-
+                if file_mod not in my_dict[i][1]:
+                    my_dict[i][1].append(file_mod)
                 total_files += 1
 
 for i in my_dict:
