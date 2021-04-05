@@ -3,7 +3,7 @@ import sys
 
 email = str(sys.argv[1])
 ip_pattern = r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}'
-email_pattern = r'(?P<username>[-+0-9a-zA-Z]+)@(?P<domain>[-+0-9a-zA-Z]+\.\w+)'
+email_pattern = r'(?P<username>[-+0-9a-zA-Z]+)@(?P<domain>[-+0-9a-zA-Z]+\.\w{2,})'
 
 
 def email_parse(string, my_pattern):
