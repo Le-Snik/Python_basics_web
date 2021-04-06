@@ -7,7 +7,7 @@ def val_checker(condition):
         def wrapper(*args, **kwargs):
             for arg in args:
                 if not condition(arg):
-                    mes = f'Wrong val :{arg}'
+                    mes = f'Wrong val: {arg}'
                     raise ValueError(mes)
                 dec_func = func(*args, **kwargs)
             return dec_func
