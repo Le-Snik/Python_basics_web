@@ -12,7 +12,7 @@ class Car:
 
     def stop(self):
         print(f"car {self.name} is stopped")
-        Car.speed = 0
+        self.speed = 0
 
     def turn(self, direction):
         print(f"car {self.name} turned at {direction}")
