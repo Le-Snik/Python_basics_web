@@ -30,12 +30,20 @@ class Cell:
 
     def make_order(self, nums):
         str_lst = ['*' * nums for i in range(0, self.numb // nums)]
-        str_lst.append('*' * (self.numb % nums))
+        str_lst.append('*' * (self.numb % nums)+'\n')
         return "\n".join(str_lst)
 
 
+my_cell = Cell(50)
+print(f"{my_cell.numb}\n{my_cell.make_order(10)}")
 
+my_cell2 = Cell(11)
 
-my_cell=Cell(50)
-
-print(my_cell.make_order(9))
+my_cell3 = my_cell - my_cell2
+print(f"{my_cell3.numb}\n{my_cell3.make_order(10)}")
+my_cell3 = my_cell + my_cell2
+print(f"{my_cell3.numb}\n{my_cell3.make_order(10)}")
+my_cell3 = my_cell * my_cell2
+print(f"{my_cell3.numb}\n{my_cell3.make_order(10)}")
+my_cell3 = my_cell / my_cell2
+print(f"{my_cell3.numb}\n{my_cell3.make_order(10)}")
