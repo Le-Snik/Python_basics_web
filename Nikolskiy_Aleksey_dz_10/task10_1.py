@@ -5,31 +5,27 @@ class Matrix:
         for i in lst:
             if len(i) != self.x_len:
                 raise IndexError("Размерность матрицы не должна меняться")
-
-        self.elements = lst
+        con_lst = [list(map(int, x_line)) for x_line in lst]
+        self.elements = con_lst
 
     def __str__(self):
-        stout = ''
+        st_out = ''
         for i in self.elements:
             line = (" ".join(map(str, i)))
-            stout = f"{stout}{line}\n"
-        return stout
+            st_out = f"{st_out}{line}\n"
+        return st_out
 
     def __add__(self, other):
-        total_lst = []
         if (self.x_len != other.x_len) or (self.y_len != other.y_len):
             raise IndexError("Складывать можно только матрицы одинаковых размерностей")
-
-        for i in range(0, len(self.elements)):
-            buff_lst = [self.elements[i][j] + other.elements[i][j] for j in range(0, len(self.elements[i]))]
-            total_lst.append(buff_lst)
-
+        total_lst = [list(map(lambda x, y: x + y, self.elements[i], other.elements[i])) for i in
+                     range(0, len(self.elements))]
         new_mat = Matrix(total_lst)
         return new_mat
 
 
-mat = Matrix([[1, 2, 3], [3, 4, 5], [6, 7, 8]])
-mat2 = Matrix([[1, 2, 3], [3, 4, 5], [6, 7, 8]])
+mat = Matrix([[1, -5, 3], [3, 4, 5], [6, 7, 8]])
+mat2 = Matrix([['2', '3', '4'], ['5', ' 6', '+7'], [8, 9, 10]])
 
 mat3 = mat + mat2
 print(mat3)
