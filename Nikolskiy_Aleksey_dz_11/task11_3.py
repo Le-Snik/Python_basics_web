@@ -1,5 +1,6 @@
 class NoDigit(Exception):
-    pass
+    def __init__(self, txt):
+        self.txt = txt
 
 
 list_num = []
@@ -13,8 +14,11 @@ while i_num != 'exit':
             try:
                 i_num = float(i_num)
             except ValueError:
-                raise NoDigit
+                raise NoDigit("Вы ввели не число")
         list_num.append(i_num)
-    except NoDigit:
+        print("Все верно, число добавлено")
+    except NoDigit as err:
+        print(err)
+
         continue
-print(list_num)
+print(*list_num)
