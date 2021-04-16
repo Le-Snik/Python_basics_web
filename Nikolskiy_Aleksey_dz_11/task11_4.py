@@ -15,12 +15,18 @@ def add_to_db(db, obj):
 
 
 office_equip_database = {}  # База данных товаров
+set_enabled_goods = set()  # множество разрешенных товаров
 
 
 class Warehouse_db_object:
+    """
+    объект базы данных склада
+    db- база данных товаров, из которой этот объект
+    quant - количество на данном складе
+    """
+
     def __init__(self, quant, db):
         self.db = db
-        # self.goods = goods
         self.quant = quant
 
 
@@ -37,27 +43,43 @@ class Warehouse:
         self.list_of_goods = {}
 
     def get_goods(self, invoice):
-        inv_size = invoice.get_invoice_size()
+        """
+        Получение товара.
+        :param invoice: Накладная
+        """
+        inv_size = invoice.get_invoice_size()  # место занимаемое получаемой поставкой
         if self.free_size >= inv_size:
             for i in invoice.suplie:
-                if i not in self.list_of_goods:
+                if i not in self.list_of_goods:  # если такого товара нет на складе, то добавляем его в список товаров
                     self.list_of_goods[i] = Warehouse_db_object(quant=invoice.suplie[i],
                                                                 db=invoice.database)
                 else:
-                    self.list_of_goods[i].quant += invoice.suplie[i]
-            self.free_size -= inv_size
+                    self.list_of_goods[i].quant += invoice.suplie[i]  # если такой товар уже есть, то просто
+                    # увеличиваем количество
+            self.free_size -= inv_size  # уменьшаем количество оставшегося свободного места
             print(f'Товар получен по накладной {invoice.number}')
         else:
             print('Невозможно принять товар, недостаточно свободного места')
 
     def send_goods(self, invoice):
+        """
+        Выгрузка товара
+        :param invoice: накладная
+        """
         for i in invoice.suplie:
             if invoice.suplie[i] <= self.list_of_goods[i].quant:
                 self.list_of_goods[i].quant -= invoice.suplie[i]
                 if self.list_of_goods[i].quant == 0:
                     self.list_of_goods.pop(i)
+            else:
+                print(f"Невозможно отгрузить товар по накладной {invoice.number} , товар в необходимом количестве "
+                      f"отсутсвует на складе. ")
 
     def show_all_goods(self):
+        """
+        Показывает все товары на складе
+        :return:
+        """
         if len(self.list_of_goods) == 0:
             print("Склад пуст")
         else:
@@ -67,10 +89,18 @@ class Warehouse:
                     f'{self.list_of_goods[i].db[i].manufacturer} {self.list_of_goods[i].db[i].model}, количество - {self.list_of_goods[i].quant}')
 
     def get_invoice(self, inv):
-        if inv.input:
-            self.get_goods(inv)
+        """
+        обработка накладной. В зависисмоти от ее типа ( на ввоз или на вывоз) вызывает соответствующий метод
+        :param inv: накладная
+        :return:
+        """
+        if inv != None:
+            if inv.input:
+                self.get_goods(inv)
+            else:
+                self.send_goods(inv)
         else:
-            self.send_goods(inv)
+            print("Принята пустая накладная")
 
 
 class OfficeEquip(ABC):
@@ -87,7 +117,7 @@ class OfficeEquip(ABC):
         self.price = price
         self.color = color
         self.size = size
-
+        set_enabled_goods.add(type(self))
         add_to_db(database, self)
 
 
@@ -134,7 +164,7 @@ class Mfu(Printers):
 
 
 class Shredders(OfficeEquip):
-    id_equip = 17000  # Bltynbabrfnjh объекта для шреддеров
+    id_equip = 17000  # Идентификатор объекта для шреддеров
 
     def __init__(self, manuf, model, price, color, secret_lvl, cutter_type):
         self.secret_lvl = secret_lvl
@@ -151,17 +181,18 @@ class Shredders(OfficeEquip):
 class Invoice:
     """
     Класс Накладная
-    Поля:
-    number  номер накладной
-    suplie - словарь где ключ -  ID , значение - количество товара с этим ID
-    database - база данных, из которой берутся товары
-    input -  True - накладная на ввоз
-            Else - накладная на вывоз
 
     """
-    today_invoices = 0
+    today_invoices = 0  # Количество накладных сегодня, нужно для формирования номера накладной
 
     def __init__(self, number, suplie, database, in_put='input'):
+        """
+        :param number: номер накладной
+        :param suplie: словарь где ключ -  ID , значение - количество товара с этим ID
+        :param database: база данных, из которой берутся товары
+        :param in_put: True - накладная на ввоз
+            Else - накладная на вывоз
+        """
         self.number = number
         self.database = database
         if in_put == 'input':
@@ -188,19 +219,43 @@ class Invoice:
         :database - бд товаров в накладной
         :return: возвращает объект класса Invoice
         """
-        Invoice.valid_list(lst_suplie)
-        now = datetime.datetime.now()
-        number = '_'.join(map(str, [now.year, now.month, now.day, cls.today_invoices]))
-        cls.today_invoices += 1
-        return Invoice(number, lst_suplie, database, in_put)
+        if Invoice.valid_list(lst_suplie):
+            now = datetime.datetime.now()
+            number = '_'.join(map(str, [now.year, now.month, now.day, cls.today_invoices]))
+            cls.today_invoices += 1
+            return Invoice(number, lst_suplie, database, in_put)
+        else:
+            print('список товаров пуст, накладная не создана')
+            return None
 
     @staticmethod
     def valid_list(suplie):
+        """
+        проверяет список поставки/
+        Если товар не в списке разрешенных товаров, или если количество введено неверно, то адаляет его из списка
+        :param suplie:
+        :return: false если все в списке удалено
+        """
+        lst_to_remove = []
         for i in suplie:
+            if type(i[0]) not in set_enabled_goods:
+                print(f'{i[0]} - некорректный товар, запись будет удалена из накладной ')
+                lst_to_remove.append(i)
+                continue
+
             if int(i[1]) <= 0:
-                print(f'{i[1]} - Некорректное значение количества товара для {i[0].manufacturer} {i[0].model}, запись '
-                      f'будет удалена из накладной ')
-                suplie.remove(i)
+                print(
+                    f'{i[1]} - Некорректное значение количества товара для {i[0].manufacturer} {i[0].model}, запись '
+                    f'будет удалена из накладной ')
+                lst_to_remove.append(i)
+                continue
+
+        for i in lst_to_remove:
+            suplie.remove(i)
+        if len(suplie) == 0:
+            return False
+        else:
+            return True
 
     def get_invoice_size(self):
         """
@@ -215,20 +270,16 @@ class Invoice:
 
 
 Hp_M15W = Printers(manufacturer='HP', model='laserJet M15W', price=9000)
-Hp_8013 = Printers(manufacturer='HP', model='OfficeJet Pro 8013', price=1200)
+Hp_8013 = Printers(manufacturer='HP', model='OfficeJet Pro 8013', price=12000)
 
 new_warehouse = Warehouse(location='Moscow', size=100)
 
-lst_suplies = [(Hp_M15W, 10), (Hp_8013, '5')]
+lst_suplies = [(Hp_M15W, 10), (Hp_8013, 5)]
 
-new_invoice = Invoice.make_invoice(lst_suplies, office_equip_database)
-new_warehouse.get_invoice(new_invoice)
-new_warehouse.get_invoice(new_invoice)
-new_warehouse.get_invoice(new_invoice)
-new_warehouse.get_invoice(new_invoice)
-new_warehouse.get_invoice(new_invoice)
-new_warehouse.get_invoice(new_invoice)
-
+new_warehouse.get_invoice(Invoice.make_invoice(lst_suplies, office_equip_database))
+new_warehouse.get_invoice(Invoice.make_invoice(lst_suplies, office_equip_database))
+new_warehouse.get_invoice(Invoice.make_invoice(lst_suplies, office_equip_database))
+new_warehouse.get_invoice(Invoice.make_invoice(lst_suplies, office_equip_database))
 
 new_warehouse.show_all_goods()
 
