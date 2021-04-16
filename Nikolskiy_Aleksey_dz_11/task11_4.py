@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-
 import datetime
 
 
@@ -66,14 +65,19 @@ class Warehouse:
         Выгрузка товара
         :param invoice: накладная
         """
+        inv_size = invoice.get_invoice_size()  # место занимаемое получаемой поставкой
         for i in invoice.suplie:
             if invoice.suplie[i] <= self.list_of_goods[i].quant:
                 self.list_of_goods[i].quant -= invoice.suplie[i]
                 if self.list_of_goods[i].quant == 0:
                     self.list_of_goods.pop(i)
+
+
             else:
                 print(f"Невозможно отгрузить товар по накладной {invoice.number} , товар в необходимом количестве "
                       f"отсутсвует на складе. ")
+        self.free_size += inv_size  # увеличиваем количество оставшегося свободного места
+        print(f'Товар отгружен по накладной {invoice.number}')
 
     def show_all_goods(self):
         """
@@ -83,10 +87,11 @@ class Warehouse:
         if len(self.list_of_goods) == 0:
             print("Склад пуст")
         else:
-            print(f'Всего на складе:')
+            print(f'---------------\nВсего на складе:')
             for i in self.list_of_goods:
                 print(
                     f'{self.list_of_goods[i].db[i].manufacturer} {self.list_of_goods[i].db[i].model}, количество - {self.list_of_goods[i].quant}')
+            print(f"Мест свободно : {self.free_size}\n---------------")
 
     def get_invoice(self, inv):
         """
@@ -141,7 +146,7 @@ class Printers(OfficeEquip):
 class Mfu(Printers):
     id_equip = 16000  # идентификатор объекта для МФУ
 
-    def __init__(self, manuf, model, price, color='white', size=1, print_type='laser', paper_format='A4',
+    def __init__(self, manufacturer, model, price, color='white', size=1, print_type='laser', paper_format='A4',
                  print_speed='15', scan_type='tablet',
                  copy_speed=10,
                  is_copy=True, is_colored=True):
@@ -150,7 +155,7 @@ class Mfu(Printers):
         self.copy_speed = copy_speed
         self.is_copy = is_copy
         self.id = Mfu.id_equip
-        super().__init__(manuf, model, price, color, print_type, paper_format, print_speed, is_colored, size)
+        super().__init__(manufacturer, model, price, color, size, print_type, paper_format, print_speed, is_colored, )
         Mfu.id_equip += 1
 
     def scanning(self, document):
@@ -166,11 +171,11 @@ class Mfu(Printers):
 class Shredders(OfficeEquip):
     id_equip = 17000  # Идентификатор объекта для шреддеров
 
-    def __init__(self, manuf, model, price, color, secret_lvl, cutter_type):
+    def __init__(self, manufacturer, model, price, color, secret_lvl, cutter_type, size=1):
         self.secret_lvl = secret_lvl
         self.cutter_type = cutter_type
         self.id = Shredders.id_equip
-        super().__init__(self, manuf, model, price, color)
+        super().__init__(manufacturer, model, price, size, color)
 
         Shredders.id_equip += 1
 
@@ -271,19 +276,19 @@ class Invoice:
 
 Hp_M15W = Printers(manufacturer='HP', model='laserJet M15W', price=9000)
 Hp_8013 = Printers(manufacturer='HP', model='OfficeJet Pro 8013', price=12000)
+Brau_s6 = Shredders(manufacturer='Brauberg', model=' S6', color='black', price=2900, secret_lvl=4, cutter_type='cross')
+Canon_MB2140 = Mfu(manufacturer='Canon', model='MAXIFY MB2140', color='black', price=6900)
 
 new_warehouse = Warehouse(location='Moscow', size=100)
 
 lst_suplies = [(Hp_M15W, 10), (Hp_8013, 5)]
 
 new_warehouse.get_invoice(Invoice.make_invoice(lst_suplies, office_equip_database))
+new_warehouse.show_all_goods()
 new_warehouse.get_invoice(Invoice.make_invoice(lst_suplies, office_equip_database))
-new_warehouse.get_invoice(Invoice.make_invoice(lst_suplies, office_equip_database))
-new_warehouse.get_invoice(Invoice.make_invoice(lst_suplies, office_equip_database))
+new_warehouse.show_all_goods()
+new_warehouse.get_invoice(Invoice.make_invoice([(Brau_s6, 50), (Canon_MB2140, 4)], office_equip_database))
+
+new_warehouse.get_invoice(Invoice.make_invoice(lst_suplies, office_equip_database, in_put='output'))
 
 new_warehouse.show_all_goods()
-
-# new_invoice_out = Invoice.make_invoice(lst_suplies, office_equip_database, in_put='output')
-#
-# new_warehouse.get_invoice(new_invoice_out)
-# new_warehouse.show_all_goods()
